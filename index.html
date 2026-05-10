@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculette Flash Sourcing — GDJ Invest</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --color-bg: #ffffff;
+    --color-bg-secondary: #f5f5f3;
+    --color-bg-tertiary: #eeede8;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #6b6b68;
+    --color-text-tertiary: #9b9b98;
+    --color-border: rgba(0,0,0,0.12);
+    --color-border-md: rgba(0,0,0,0.22);
+    --color-success-bg: #eaf3de;
+    --color-success-text: #3b6d11;
+    --color-success-border: rgba(59,109,17,0.3);
+    --color-warning-bg: #faeeda;
+    --color-warning-text: #854f0b;
+    --color-warning-border: rgba(133,79,11,0.3);
+    --color-danger-bg: #fcebeb;
+    --color-danger-text: #a32d2d;
+    --color-danger-border: rgba(163,45,45,0.3);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: #1e1e1c;
+      --color-bg-secondary: #2a2a28;
+      --color-bg-tertiary: #333330;
+      --color-text-primary: #f0efe8;
+      --color-text-secondary: #a8a8a4;
+      --color-text-tertiary: #6b6b68;
+      --color-border: rgba(255,255,255,0.1);
+      --color-border-md: rgba(255,255,255,0.2);
+      --color-success-bg: #173404;
+      --color-success-text: #c0dd97;
+      --color-success-border: rgba(192,221,151,0.25);
+      --color-warning-bg: #412402;
+      --color-warning-text: #fac775;
+      --color-warning-border: rgba(250,199,117,0.25);
+      --color-danger-bg: #501313;
+      --color-danger-text: #f7c1c1;
+      --color-danger-border: rgba(247,193,193,0.25);
+    }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+  h1 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: var(--color-text-primary);
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+  }
+  .section {
+    background: var(--color-bg);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: .75rem;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-bottom: 8px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px 12px; margin-bottom: 8px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12px; color: var(--color-text-secondary); }
+  .field input, .field select {
+    width: 100%;
+    height: 36px;
+    border: 0.5px solid var(--color-border-md);
+    border-radius: var(--radius-md);
+    padding: 0 10px;
+    font-size: 13px;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-family: inherit;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: #378ADD;
+    box-shadow: 0 0 0 3px rgba(55,138,221,0.15);
+  }
+  .toggle-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: .75rem; }
+  .toggle-btn {
+    height: 32px;
+    padding: 0 14px;
+    border: 0.5px solid var(--color-border-md);
+    border-radius: var(--radius-md);
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    font-family: inherit;
+    transition: background .1s;
+  }
+  .toggle-btn:hover { background: var(--color-bg-secondary); }
+  .toggle-btn.active {
+    border-color: #378ADD;
+    background: #e6f1fb;
+    color: #185fa5;
+    font-weight: 500;
+  }
+  @media (prefers-color-scheme: dark) {
+    .toggle-btn.active { background: #0c447c; color: #b5d4f4; border-color: #378ADD; }
+  }
+  .lot-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 1fr 32px;
+    gap: 6px;
+    align-items: end;
+    margin-bottom: 6px;
+  }
+  .lot-row label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 3px; display: block; }
+  .lot-row input, .lot-row select {
+    width: 100%;
+    height: 32px;
+    border: 0.5px solid var(--color-border-md);
+    border-radius: var(--radius-md);
+    padding: 0 8px;
+    font-size: 13px;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-family: inherit;
+  }
+  .btn-del {
+    height: 32px;
+    width: 32px;
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: none;
+    cursor: pointer;
+    color: var(--color-text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .btn-del:hover { background: var(--color-danger-bg); color: var(--color-danger-text); }
+  .btn-add {
+    height: 32px;
+    border: 0.5px solid var(--color-border-md);
+    border-radius: var(--radius-md);
+    background: none;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    padding: 0 14px;
+    margin-top: 6px;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-add:hover { background: var(--color-bg-secondary); }
+  .lot-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 1fr 32px;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .lot-header span { font-size: 11px; color: var(--color-text-tertiary); }
+  .sep { height: 0.5px; background: var(--color-border); margin: .75rem 0; }
+  .results { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
+  .results3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+  .metric {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: .75rem 1rem;
+  }
+  .metric-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .metric-val { font-size: 19px; font-weight: 500; color: var(--color-text-primary); }
+  .metric-val.go { color: var(--color-success-text); }
+  .metric-val.warn { color: var(--color-warning-text); }
+  .metric-val.nogo { color: var(--color-danger-text); }
+  .decision {
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 0.5px solid var(--color-border);
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+  }
+  .decision i { font-size: 22px; flex-shrink: 0; }
+  .decision.go { background: var(--color-success-bg); border-color: var(--color-success-border); color: var(--color-success-text); }
+  .decision.warn { background: var(--color-warning-bg); border-color: var(--color-warning-border); color: var(--color-warning-text); }
+  .decision.nogo { background: var(--color-danger-bg); border-color: var(--color-danger-border); color: var(--color-danger-text); }
+  input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
+  .readonly-input {
+    background: var(--color-bg-tertiary) !important;
+    color: var(--color-text-secondary) !important;
+    cursor: default;
+  }
+  @media (max-width: 600px) {
+    .row { grid-template-columns: 1fr; }
+    .row3 { grid-template-columns: 1fr 1fr; }
+    .results { grid-template-columns: 1fr 1fr; }
+    .results3 { grid-template-columns: 1fr 1fr; }
+    .lot-row { grid-template-columns: 70px 1fr 1fr 32px; }
+    .lot-row .lot-unit { display: none; }
+    .lot-header { grid-template-columns: 70px 1fr 1fr 32px; }
+    .lot-header .lot-unit-h { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Calculette flash sourcing</h1>
+  <p class="subtitle">GDJ Invest — analyse rapide pré-qualification</p>
+
+  <div class="section">
+    <div class="section-title">Type de projet</div>
+    <div class="toggle-row">
+      <button class="toggle-btn active" onclick="setType('simple',this)">Achat-revente simple</button>
+      <button class="toggle-btn" onclick="setType('renov',this)">Achat-revente rénovation</button>
+      <button class="toggle-btn" onclick="setType('division',this)">Division</button>
+      <button class="toggle-btn" onclick="setType('detach',this)">Détachement terrain</button>
+      <button class="toggle-btn" onclick="setType('mixte',this)">Combinaison</button>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Régime TVA</label>
+        <select id="tva" onchange="calc()">
+          <option value="0">Pas de TVA</option>
+          <option value="marge">TVA sur marge</option>
+          <option value="pleine">TVA pleine 20%</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Durée portage (mois)</label>
+        <input type="number" id="portage" value="8" min="1" max="36" oninput="calc()">
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Acquisition</div>
+    <div class="row">
+      <div class="field"><label>Prix demandé (€)</label><input type="number" id="prix" value="420000" oninput="calc()"></div>
+      <div class="field"><label>Négociation / décote (€)</label><input type="number" id="deco" value="0" oninput="calc()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Surface (m²)</label><input type="number" id="surface" value="160" oninput="calc()"></div>
+      <div class="field"><label>Travaux (€/m²)</label><input type="number" id="travaux_m2" value="350" oninput="calc()"></div>
+    </div>
+    <div class="row3">
+      <div class="field"><label>Frais mutation (%)</label><input type="number" id="frais_mut_pct" value="3" step="0.5" oninput="calc()"></div>
+      <div class="field"><label>Frais divers (%)</label><input type="number" id="frais_div_pct" value="2" step="0.5" oninput="calc()"></div>
+      <div class="field"><label>Aléa PR (%)</label><input type="number" id="alea_pct" value="5" step="1" oninput="calc()"></div>
+    </div>
+    <div class="row3">
+      <div class="field"><label>Apport (%)</label><input type="number" id="apport_pct" value="30" step="5" oninput="calc()"></div>
+      <div class="field"><label>Frais financiers (% crédit/an)</label><input type="number" id="fi_pct" value="9" step="0.5" oninput="calc()"></div>
+      <div class="field" id="field-terrain" style="display:none">
+        <label>Valeur terrain (€)</label><input type="number" id="val_terrain" value="0" oninput="calc()">
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="section-lots" style="display:none">
+    <div class="section-title">Revente — lots</div>
+    <div class="lot-header">
+      <span>Type</span><span>Surface m²</span><span>Prix/m² €</span><span class="lot-unit-h">Prix unitaire</span><span></span>
+    </div>
+    <div id="lots-container"></div>
+    <button class="btn-add" onclick="addLot()">
+      <i class="ti ti-plus"></i> Ajouter un lot
+    </button>
+    <div class="sep"></div>
+    <div class="row">
+      <div class="field"><label>Annexes — caves, parkings… (€)</label><input type="number" id="annexes" value="0" oninput="calc()"></div>
+      <div class="field"><label>Décote / surcote (%)</label><input type="number" id="decote" value="0" step="1" oninput="calc()"></div>
+    </div>
+  </div>
+
+  <div class="section" id="section-unitaire">
+    <div class="section-title">Revente — bien unitaire</div>
+    <div class="row">
+      <div class="field"><label>Prix/m² marché (€)</label><input type="number" id="pm2_unitaire" value="3200" oninput="calc()"></div>
+      <div class="field"><label>Décote / surcote (%)</label><input type="number" id="decote_u" value="0" step="1" oninput="calc()"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Résultats</div>
+    <div class="results">
+      <div class="metric"><div class="metric-label">Prix de revient</div><div class="metric-val" id="r-pr">—</div></div>
+      <div class="metric"><div class="metric-label">CA revente</div><div class="metric-val" id="r-ca">—</div></div>
+      <div class="metric"><div class="metric-label">Marge brute €</div><div class="metric-val" id="r-marge-e">—</div></div>
+      <div class="metric"><div class="metric-label">Marge brute %</div><div class="metric-val" id="r-marge-p">—</div></div>
+    </div>
+    <div class="results3">
+      <div class="metric"><div class="metric-label">Rdmt fonds propres</div><div class="metric-val" id="r-rfp">—</div></div>
+      <div class="metric"><div class="metric-label">Coût financier</div><div class="metric-val" id="r-fi">—</div></div>
+      <div class="metric"><div class="metric-label">Seuil marge cible</div><div class="metric-val">20–25 %</div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="decision" id="decision-box">
+      <i class="ti ti-calculator"></i>
+      <span id="decision-text">Complétez les champs pour obtenir la décision</span>
+    </div>
+  </div>
+</div>
+
+<script>
+let projectType = 'simple';
+let lots = [];
+let lotCounter = 0;
+
+function setType(t, btn) {
+  projectType = t;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const isMultiLots = (t === 'division' || t === 'mixte');
+  const isDetach = (t === 'detach' || t === 'mixte');
+  document.getElementById('section-lots').style.display = isMultiLots ? '' : 'none';
+  document.getElementById('section-unitaire').style.display = isMultiLots ? 'none' : '';
+  document.getElementById('field-terrain').style.display = isDetach ? '' : 'none';
+  if (isMultiLots && lots.length === 0) { addLot(); addLot(); }
+  calc();
+}
+
+function addLot() {
+  const id = ++lotCounter;
+  lots.push({ id });
+  renderLots();
+  calc();
+}
+
+function removeLot(id) {
+  lots = lots.filter(l => l.id !== id);
+  renderLots();
+  calc();
+}
+
+function renderLots() {
+  const c = document.getElementById('lots-container');
+  c.innerHTML = lots.map(l => `
+    <div class="lot-row">
+      <div>
+        <label>Type</label>
+        <select id="lt-${l.id}" onchange="calc()">
+          <option>T1</option><option>T2</option><option selected>T3</option><option>T4</option><option>T5</option><option>Autre</option>
+        </select>
+      </div>
+      <div>
+        <label>Surface m²</label>
+        <input type="number" id="ls-${l.id}" value="40" oninput="calc()">
+      </div>
+      <div>
+        <label>Prix/m² €</label>
+        <input type="number" id="lp-${l.id}" value="3200" oninput="calc()">
+      </div>
+      <div class="lot-unit">
+        <label>= Prix unitaire</label>
+        <input type="number" id="lu-${l.id}" class="readonly-input" readonly>
+      </div>
+      <button class="btn-del" onclick="removeLot(${l.id})" aria-label="Supprimer ce lot">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+function fmt(n) {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Math.round(n));
+}
+function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + ' %'; }
+
+function calc() {
+  const prix        = +document.getElementById('prix').value        || 0;
+  const deco        = +document.getElementById('deco').value        || 0;
+  const surface     = +document.getElementById('surface').value     || 0;
+  const travaux_m2  = +document.getElementById('travaux_m2').value  || 0;
+  const frais_mut   = (+document.getElementById('frais_mut_pct').value || 0) / 100;
+  const frais_div   = (+document.getElementById('frais_div_pct').value || 0) / 100;
+  const alea_pct    = (+document.getElementById('alea_pct').value    || 0) / 100;
+  const apport_pct  = (+document.getElementById('apport_pct').value  || 30) / 100;
+  const fi_pct      = (+document.getElementById('fi_pct').value      || 9) / 100;
+  const portage     = +document.getElementById('portage').value      || 8;
+  const tvaMode     = document.getElementById('tva').value;
+
+  const prix_achat  = prix - deco;
+  const travaux     = surface * travaux_m2;
+  const frais_m     = prix_achat * frais_mut;
+  const frais_d     = prix_achat * frais_div;
+  const total_avant = prix_achat + travaux + frais_m + frais_d;
+
+  const banque   = total_avant * (1 - apport_pct);
+  const cout_fi  = banque * fi_pct * (portage / 12);
+  const alea     = (total_avant + cout_fi) * alea_pct;
+  const PR       = total_avant + cout_fi + alea;
+
+  const isMultiLots = (projectType === 'division' || projectType === 'mixte');
+  let CA = 0;
+
+  if (isMultiLots) {
+    lots.forEach(l => {
+      const s = +document.getElementById('ls-' + l.id)?.value || 0;
+      const p = +document.getElementById('lp-' + l.id)?.value || 0;
+      const u = s * p;
+      const el = document.getElementById('lu-' + l.id);
+      if (el) el.value = Math.round(u);
+      CA += u;
+    });
+    CA += +document.getElementById('annexes').value || 0;
+    const decote = (+document.getElementById('decote').value || 0) / 100;
+    CA = CA * (1 + decote);
+  } else {
+    const pm2    = +document.getElementById('pm2_unitaire').value || 0;
+    const decote = (+document.getElementById('decote_u').value || 0) / 100;
+    CA = surface * pm2 * (1 + decote);
+  }
+
+  const val_terrain = (projectType === 'detach' || projectType === 'mixte')
+    ? (+document.getElementById('val_terrain')?.value || 0) : 0;
+  const CA_total = CA + val_terrain;
+
+  let marge_e, marge_p;
+  if (tvaMode === 'pleine') {
+    const CA_HT = CA_total / 1.20;
+    marge_e = CA_HT - PR;
+    marge_p = CA_HT > 0 ? (marge_e / CA_HT) * 100 : 0;
+  } else if (tvaMode === 'marge') {
+    const base = CA_total - PR;
+    const tva  = base > 0 ? base * (0.20 / 1.20) : 0;
+    marge_e = base - tva;
+    marge_p = CA_total > 0 ? (marge_e / CA_total) * 100 : 0;
+  } else {
+    marge_e = CA_total - PR;
+    marge_p = CA_total > 0 ? (marge_e / CA_total) * 100 : 0;
+  }
+
+  const fp  = total_avant * apport_pct + cout_fi + alea;
+  const rfp = fp > 0 ? (marge_e / fp) * 100 : 0;
+  const cl  = marge_p >= 20 ? 'go' : marge_p >= 12 ? 'warn' : 'nogo';
+
+  document.getElementById('r-pr').textContent  = fmt(PR);
+  document.getElementById('r-ca').textContent  = fmt(CA_total);
+  document.getElementById('r-fi').textContent  = fmt(cout_fi);
+  document.getElementById('r-rfp').textContent = fmtPct(rfp);
+
+  const me = document.getElementById('r-marge-e');
+  me.textContent = fmt(marge_e);
+  me.className   = 'metric-val ' + cl;
+
+  const mp = document.getElementById('r-marge-p');
+  mp.textContent = fmtPct(marge_p);
+  mp.className   = 'metric-val ' + cl;
+
+  const box = document.getElementById('decision-box');
+  const txt = document.getElementById('decision-text');
+  box.className = 'decision ' + cl;
+
+  const icons = { go: 'ti-circle-check', warn: 'ti-alert-triangle', nogo: 'ti-circle-x', neutral: 'ti-calculator' };
+  box.querySelector('i').className = 'ti ' + (icons[cl] || icons.neutral);
+
+  if (cl === 'go') {
+    txt.textContent = `GO — marge de ${fmtPct(marge_p)}, au-dessus du seuil cible. Dossier à pousser en pré-analyse.`;
+  } else if (cl === 'warn') {
+    txt.textContent = `Attention — marge de ${fmtPct(marge_p)}, en-dessous du seuil. À creuser : négociation prix ou révision travaux.`;
+  } else {
+    txt.textContent = `NO GO — marge de ${fmtPct(marge_p)}, insuffisante. Abandon ou renégociation forte nécessaire.`;
+  }
+}
+
+calc();
+</script>
+</body>
+</html>
